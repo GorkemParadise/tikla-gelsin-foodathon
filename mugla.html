@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muğla TAB Food - Platform Market Shares</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --yemeksepeti: #fa2d5e;
+    --getir: #7b61ff;
+    --tikla: #ff9f1c;
+    --trendyol: #00c9a7;
+    --migros: #3b82f6;
+    --diger: #6b7280;
+    --accent: #fa2d5e;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb.one { top: -10%; left: -5%; width: 500px; height: 500px; background: rgba(250,45,94,0.08); }
+  .glow-orb.two { bottom: -10%; right: -5%; width: 600px; height: 600px; background: rgba(123,97,255,0.06); }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    background: rgba(250,45,94,0.1);
+    border: 1px solid rgba(250,45,94,0.2);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--yemeksepeti);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, #a0a0c0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    animation: fadeDown 0.6s ease 0.1s both;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--text-dim);
+    font-weight: 400;
+    animation: fadeDown 0.6s ease 0.2s both;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+    animation: fadeDown 0.6s ease 0.3s both;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s ease 0.4s both;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .summary-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(250,45,94,0.3);
+  }
+  .summary-card .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .summary-card .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .summary-card .detail {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+    animation: fadeUp 0.6s ease 0.5s both;
+  }
+  .controls h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .sort-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .sort-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sort-btn:hover { border-color: var(--text-dim); color: var(--text); }
+  .sort-btn.active {
+    background: rgba(250,45,94,0.15);
+    border-color: var(--yemeksepeti);
+    color: var(--yemeksepeti);
+  }
+
+  .table-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease 0.6s both;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  thead th:first-child { padding-left: 28px; }
+  thead th.platform-col { text-align: center; min-width: 90px; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody td {
+    padding: 18px 20px;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  tbody td:first-child { padding-left: 28px; }
+
+  .district-name {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    color: #fff;
+  }
+
+  .cell-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+  .cell-bar-track {
+    width: 60px;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .cell-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cell-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  .cell-value.top1 { color: var(--yemeksepeti); }
+
+  .bar-yemeksepeti { background: var(--yemeksepeti); }
+  .bar-getir { background: var(--getir); }
+  .bar-tikla { background: var(--tikla); }
+  .bar-trendyol { background: var(--trendyol); }
+  .bar-migros { background: var(--migros); }
+  .bar-diger { background: var(--diger); }
+
+  .color-yemeksepeti { color: var(--yemeksepeti); }
+  .color-getir { color: var(--getir); }
+  .color-tikla { color: var(--tikla); }
+  .color-trendyol { color: var(--trendyol); }
+  .color-migros { color: var(--migros); }
+  .color-diger { color: var(--diger); }
+
+  .dist-bar-container {
+    display: flex;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .dist-segment {
+    height: 100%;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: rgba(250,45,94,0.15); color: var(--yemeksepeti); }
+  .rank-2 { background: rgba(123,97,255,0.12); color: var(--getir); }
+  .rank-3 { background: rgba(255,159,28,0.12); color: var(--tikla); }
+  .rank-default { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+  footer span { color: var(--yemeksepeti); font-weight: 600; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 900px) {
+    .cell-bar-track { width: 40px; }
+    thead th, tbody td { padding: 12px 10px; font-size: 11px; }
+    .cell-value { font-size: 11px; min-width: 34px; }
+    .district-name { font-size: 13px; }
+    .rank-badge { width: 22px; height: 22px; font-size: 10px; margin-right: 8px; }
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 24px 12px 40px; }
+    .summary-row { grid-template-columns: repeat(2, 1fr); }
+    .cell-bar-track { display: none; }
+    thead th.platform-col { min-width: 55px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="badge">March 2026 &bull; Data Analysis</div>
+    <h1>Muğla Districts<br>Platform Market Shares</h1>
+    <p class="subtitle">District-based online order distribution of TAB Food restaurants (Burger King, Popeyes, Subway, Arby's, Sbarro, Usta Dönerci, Usta Pideci)</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yemeksepeti)"></div>Yemeksepeti</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--getir)"></div>Getir Food</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--tikla)"></div>Tıkla Gelsin</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--trendyol)"></div>Trendyol Food</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--migros)"></div>Migros Food</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--diger)"></div>Other</div>
+  </div>
+
+  <div class="summary-row" id="summaryRow"></div>
+
+  <div class="controls">
+    <h2>District-Based Distribution</h2>
+    <div class="sort-btns" id="sortBtns"></div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>TAB Food</span> &mdash; Muğla Region Platform Analysis &bull; March 2026 &bull; Estimation Model v1.1
+  </footer>
+</div>
+
+<script>
+const platforms = [
+  { key: 'yemeksepeti', name: 'Yemeksepeti',  color: 'yemeksepeti' },
+  { key: 'getir',       name: 'Getir Food',    color: 'getir' },
+  { key: 'tikla',       name: 'Tıkla Gelsin',  color: 'tikla' },
+  { key: 'trendyol',   name: 'Trendyol Food', color: 'trendyol' },
+  { key: 'migros',     name: 'Migros Food',   color: 'migros' },
+  { key: 'diger',      name: 'Other',          color: 'diger' },
+];
+
+// Removed: Köyceğiz, Ortaca, Seydikemer, Ula (low-volume / low-strategic districts)
+const data = [
+  { district: 'Bodrum',   yemeksepeti: 36.3, getir: 19.7, tikla: 8.9,  trendyol: 28.1, migros: 7.0, diger: 0 },
+  { district: 'Dalaman',  yemeksepeti: 31,   getir: 24,   tikla: 22,   trendyol: 17,   migros: 0,   diger: 6 },
+  { district: 'Fethiye',  yemeksepeti: 42,   getir: 28,   tikla: 6,    trendyol: 24,   migros: 0,   diger: 0 },
+  { district: 'Marmaris', yemeksepeti: 45,   getir: 15,   tikla: 8,    trendyol: 26,   migros: 3,   diger: 3 },
+  { district: 'Menteşe',  yemeksepeti: 34.7, getir: 17.4, tikla: 31.2, trendyol: 14.7, migros: 2.7, diger: 0 },
+  { district: 'Milas',    yemeksepeti: 43.5, getir: 16.5, tikla: 23.5, trendyol: 11,   migros: 3.5, diger: 2 },
+  { district: 'Yatağan',  yemeksepeti: 54.7, getir: 14.6, tikla: 4,    trendyol: 23.2, migros: 3.5, diger: 0 },
+];
+
+let sortKey = 'yemeksepeti';
+
+function getAvg(key) {
+  return (data.reduce((s, d) => s + d[key], 0) / data.length).toFixed(1);
+}
+
+function getMax(key) {
+  let max = data.reduce((a, b) => a[key] > b[key] ? a : b);
+  return { district: max.district, value: max[key] };
+}
+
+function renderSummary() {
+  const cards = [
+    { label: 'Districts', value: data.length, detail: 'Muğla region' },
+    { label: 'Yemeksepeti Avg.', value: `${getAvg('yemeksepeti')}%`, detail: `Highest: ${getMax('yemeksepeti').district} (${getMax('yemeksepeti').value}%)` },
+    { label: 'Getir Food Avg.',  value: `${getAvg('getir')}%`,       detail: `Highest: ${getMax('getir').district} (${getMax('getir').value}%)` },
+    { label: 'Tıkla Gelsin Avg.',value: `${getAvg('tikla')}%`,       detail: `Highest: ${getMax('tikla').district} (${getMax('tikla').value}%)` },
+    { label: 'Trendyol Avg.',    value: `${getAvg('trendyol')}%`,    detail: `Highest: ${getMax('trendyol').district} (${getMax('trendyol').value}%)` },
+  ];
+  document.getElementById('summaryRow').innerHTML = cards.map(c =>
+    `<div class="summary-card">
+      <div class="label">${c.label}</div>
+      <div class="value">${c.value}</div>
+      <div class="detail">${c.detail}</div>
+    </div>`
+  ).join('');
+}
+
+function renderSortBtns() {
+  const btns = [
+    { key: 'district',    label: 'District (A–Z)' },
+    { key: 'yemeksepeti', label: 'Yemeksepeti' },
+    { key: 'getir',       label: 'Getir' },
+    { key: 'tikla',       label: 'Tıkla Gelsin' },
+    { key: 'trendyol',   label: 'Trendyol' },
+  ];
+  document.getElementById('sortBtns').innerHTML = btns.map(b =>
+    `<button class="sort-btn ${sortKey === b.key ? 'active' : ''}" data-key="${b.key}">${b.label}</button>`
+  ).join('');
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sortKey = btn.dataset.key;
+      renderSortBtns();
+      renderTable();
+    });
+  });
+}
+
+function renderTable() {
+  const sorted = [...data].sort((a, b) => {
+    if (sortKey === 'district') return a.district.localeCompare(b.district, 'en');
+    return b[sortKey] - a[sortKey];
+  });
+
+  document.getElementById('tableHead').innerHTML = `
+    <tr>
+      <th style="width:180px">District</th>
+      ${platforms.map(p => `<th class="platform-col">${p.name}</th>`).join('')}
+      <th style="min-width:160px">Distribution</th>
+    </tr>`;
+
+  document.getElementById('tableBody').innerHTML = sorted.map((row, idx) => {
+    const maxVal = Math.max(row.yemeksepeti, row.getir, row.tikla, row.trendyol, row.migros, row.diger);
+    const rankClass = idx < 3 ? `rank-${idx+1}` : 'rank-default';
+
+    const cells = platforms.map(p => {
+      const val = row[p.key];
+      if (val === 0) return `<td class="platform-col"><div class="cell-bar-wrapper"><span class="cell-value" style="color:var(--text-dim)">—</span></div></td>`;
+      const isTop = val === maxVal;
+      const barW = (val / 60) * 100;
+      return `<td class="platform-col">
+        <div class="cell-bar-wrapper">
+          <div class="cell-bar-track"><div class="cell-bar-fill bar-${p.color}" style="width:${barW}%"></div></div>
+          <span class="cell-value color-${p.color}" ${isTop ? 'style="font-weight:800"' : ''}>${val % 1 === 0 ? val : val.toFixed(1)}%</span>
+        </div>
+      </td>`;
+    }).join('');
+
+    const distSegments = platforms.filter(p => row[p.key] > 0).map(p =>
+      `<div class="dist-segment" style="width:${row[p.key]}%;background:var(--${p.color})"></div>`
+    ).join('');
+
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center">
+          <span class="rank-badge ${rankClass}">${idx + 1}</span>
+          <span class="district-name">${row.district}</span>
+        </div>
+      </td>
+      ${cells}
+      <td><div class="dist-bar-container">${distSegments}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+renderSummary();
+renderSortBtns();
+renderTable();
+</script>
+</body>
+</html>
