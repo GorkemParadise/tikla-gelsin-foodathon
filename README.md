@@ -5,3 +5,9 @@ Interactive HTML dashboards showing online food delivery platform market shares 
 ## Data
 
 Monthly estimated order figures, 2024–2025 model. Most of the data was obtained from TAB Foods, and missing data were filled in using model-based methods. (March 2026).
+
+![İstanbul Data](img/istanbul.png)
+
+![Ankara Data](img/ankara.png)
+
+![Muğla Data](img/mugla.png)
